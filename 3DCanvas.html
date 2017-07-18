@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="description" content="[add your bin description]">
+  <meta charset="utf-8">
+  <title>TWGL 101</title>
+  <!-- you need to load TWGL from somewhere -
+    -- this grabs it from the CS server, which
+    -- might take a while
+    -->
+  <canvas id="myCanvas" 
+	   width="500" height="500"
+	   style="border:1px solid #000;">
+  </canvas><br/>
+  <input id="slider1" type="range" min="-100" max="100" />
+  <input id="slider2" type="range" min="-100" max="100" />
+  <script src="http://graphics.cs.wisc.edu/JS/twgl-full.min.js">
+    
+  </script>
+  
+  <script>
+  function setup() { "use strict";
+  var canvas = document.getElementById('myCanvas');
+  var context = canvas.getContext('2d');
+  var m4 = twgl.m4;
+  
+  var slider1 = document.getElementById('slider1');
+  slider1.value = 0;
+  var slider2 = document.getElementById('slider2');
+  slider2.value = 0;
+                
+  function moveToTx(x,y,z,Tx) {
+    var loc = [x,y,z];
+    var locTx = m4.transformPoint(Tx,loc);
+    context.moveTo(locTx[0]+250,-locTx[1]+250);
+  }
+
+  function lineToTx(x,y,z,Tx) {
+    var loc = [x,y,z];
+    var locTx = m4.transformPoint(Tx,loc);
+    context.lineTo(locTx[0]+250,-locTx[1]+250);
+  }
+                
+  function drawPyramid(Tx) {
+    //Drawing the base first
+    moveToTx(-50,-50,-50,Tx);lineToTx(-50,-50,50,Tx);context.stroke();
+    moveToTx(-50,-50,-50,Tx);lineToTx(50,-50,-50,Tx);context.stroke();
+    moveToTx(50,-50,-50,Tx);lineToTx(50,-50,50,Tx);context.stroke();
+    moveToTx(50,-50,50,Tx);lineToTx(-50,-50,50,Tx);context.stroke();
+    
+    //Drawing the slopes
+    moveToTx(-50,-50,-50,Tx);lineToTx(0,50,0,Tx);context.stroke();
+    moveToTx(-50,-50,50,Tx);lineToTx(0,50,0,Tx);context.stroke();
+    moveToTx(50,-50,-50,Tx);lineToTx(0,50,0,Tx);context.stroke();
+    moveToTx(50,-50,50,Tx);lineToTx(0,50,0,Tx);context.stroke();
+    
+  }
+
+  function drawCube(Tx) {
+    // A little cross on the front face, for identification
+
+    //floating pyramid base
+    moveToTx(50,50,50,Tx);lineToTx(100,50,50,Tx);context.stroke();
+    moveToTx(50,50,50,Tx);lineToTx(50,100,50,Tx);context.stroke();
+    moveToTx(50,100,50,Tx);lineToTx(100,100,50,Tx);context.stroke();
+    moveToTx(100,100,50,Tx);lineToTx(100,50,50,Tx);context.closePath();context.fill();
+    
+    
+    moveToTx(50,50,50,Tx);lineToTx(75,75,75,Tx);context.stroke();
+    moveToTx(50,100,50,Tx);lineToTx(75,75,75,Tx);context.stroke();
+    moveToTx(100,100,50,Tx);lineToTx(75,75,75,Tx);context.stroke();
+    moveToTx(100,50,50,Tx);lineToTx(75,75,75,Tx);context.stroke();
+    
+    
+   
+  }
+                    
+  var angle1 = 0;
+ 
+
+  function draw() {
+    // hack to clear the canvas fast
+    canvas.width = canvas.width;
+    
+    var angle1 = slider1.value*0.01*Math.PI;
+    var angle2 = slider2.value*0.01*Math.PI;
+    var axis = [10,700,1];
+  
+    var Tmodel=m4.axisRotation(axis,angle2);
+
+    var eye=[500*Math.cos(angle1),300,500*Math.sin(angle1)];
+    var target=[0,0,0];
+    var up=[0,1,0];
+    var Tcamera=m4.inverse(m4.lookAt(eye,target,up));   
+    
+    var Tmodelview=m4.multiply(Tmodel,Tcamera);
+
+    drawCube(Tmodelview);
+    drawPyramid(Tcamera);
+  }
+
+  slider1.addEventListener("input",draw);
+  slider2.addEventListener("input",draw);
+  draw();
+
+}
+window.onload = setup;
+
+</script>
+</head>
+<body>
+
+</body>
+</html>

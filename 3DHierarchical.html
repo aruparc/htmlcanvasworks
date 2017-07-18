@@ -1,0 +1,238 @@
+<html>
+<body>
+<canvas 
+	id="myCanvas" 
+	width="600" 
+	height="800" 
+	style="border:1px solid #000; 
+	background: black">
+</canvas>
+<br>
+<input id="slider1" type="range" min="0" max="1000">
+<input id="slider2" type="range" min="0" max="100">
+
+ <script src="http://graphics.cs.wisc.edu/JS/twgl-full.min.js"></script>
+
+<script>
+
+//With assistance from Matt Nelson
+
+function setup() {
+var angle= 0;
+var canvas = document.getElementById('myCanvas');
+var context = canvas.getContext('2d');
+var m4 = twgl.m4;
+var y = 0;
+var dy = 1;
+
+
+//gradients used to show painter's algorithm on the polygons
+
+//cyan to blue transition
+var grd1 = context.createLinearGradient(0,0,10,10);
+grd1.addColorStop(0,"cyan");
+grd1.addColorStop(1,"blue");
+
+
+//blue to pink transition
+var grd2 = context.createLinearGradient(0,0,10,10);
+grd2.addColorStop(0,"blue");
+grd2.addColorStop(1,"DeepPink");
+
+
+//yellow to green transition
+var grd3 = context.createLinearGradient(0,10,10,0);
+grd3.addColorStop(0,"yellow");
+grd3.addColorStop(1,"chartreuse");
+
+
+//red to black transition
+//NOTE: black transition causes this side of the cube to disappear into the background
+var grd4 = context.createLinearGradient(0,0,10,10);
+grd4.addColorStop(0,"red");
+grd4.addColorStop(1,"black");
+
+
+function moveToTx(x,y,z,Tx) {
+    var loc = [x,y,z];
+    var locTx = m4.transformPoint(Tx,loc);
+    context.moveTo(locTx[0]-50,locTx[1]-50);
+  }
+
+  function lineToTx(x,y,z,Tx) {
+    var loc = [x,y,z];
+    var locTx = m4.transformPoint(Tx,loc);
+    context.lineTo(locTx[0]-50,locTx[1]-50);
+  }
+
+//draw the big cube
+function drawCube(Tx) {
+
+    context.strokeStyle="#000000";
+
+    context.beginPath();
+    context.fillStyle=grd1;
+    moveToTx(-150,-75,-75,Tx);lineToTx(-150,-75,-150,Tx);
+    lineToTx(-150,-150,-150,Tx);lineToTx(-150,-150,-75,Tx);
+    lineToTx(-150,-75,-75,Tx);
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+    if( angle > 1.5 && angle < 4.2) {
+    context.beginPath();
+    context.fillStyle=grd3;
+    moveToTx(-75,-75,-75,Tx);lineToTx(-150,-75,-75,Tx);
+    lineToTx(-150,-150,-75,Tx);lineToTx(-75,-150,-75,Tx);
+    lineToTx(-75,-75,-75,Tx);
+    context.closePath();
+    context.fill();
+    context.stroke();
+	
+    drawSlide(Tx);
+	
+    context.beginPath();
+    context.fillStyle=grd2;
+    moveToTx(-150,-75,-150,Tx);lineToTx(-75,-75,-150,Tx);
+    lineToTx(-75,-150,-150,Tx);lineToTx(-150,-150,-150,Tx);
+    lineToTx(-150,-75,-150,Tx);
+	context.closePath();
+    context.fill();
+    context.stroke();
+   } 
+
+   else { 
+    context.beginPath();
+    context.fillStyle=grd2;
+    moveToTx(-150,-75,-150,Tx);lineToTx(-75,-75,-150,Tx);
+    lineToTx(-75,-150,-150,Tx);lineToTx(-150,-150,-150,Tx);
+    lineToTx(-150,-75,-150,Tx);
+    context.closePath();
+    context.fill();
+    context.stroke();
+    
+    drawSlide(Tx);
+	
+    context.beginPath();
+    context.fillStyle=grd3;
+    moveToTx(-75,-75,-75,Tx);lineToTx(-150,-75,-75,Tx);
+    lineToTx(-150,-150,-75,Tx);lineToTx(-75,-150,-75,Tx);
+    lineToTx(-75,-75,-75,Tx);
+    context.closePath();
+    context.fill();
+    context.stroke();
+   }
+
+    context.beginPath();
+    context.fillStyle=grd4;
+    moveToTx(-75,-75,-150,Tx);lineToTx(-75,-75,-75,Tx);
+    lineToTx(-75,-150,-75,Tx);lineToTx(-75,-150,-150,Tx);
+    lineToTx(-75,-75,-150,Tx);
+    context.closePath();
+    context.fill();
+    context.stroke();
+	
+  }
+
+//draw the middle cube
+function drawSlide(Tx) {
+	if (y > 50 || y < -75) {
+		dy = -dy;
+	}
+	y += dy;
+	context.strokeStyle="#000000";
+
+    context.beginPath();
+	context.fillStyle=grd4;
+    moveToTx(-200,-150 - y,-150,Tx);lineToTx(-200,-150 - y,-200,Tx);
+    lineToTx(-200,-200 - y,-200,Tx);lineToTx(-200,-200 - y,-150,Tx);
+    lineToTx(-200,-150 - y,-150,Tx);
+    context.closePath();
+    context.fill();
+    context.stroke();
+
+   if( angle > 1.5 && angle < 4.2) {
+	context.beginPath();
+	context.fillStyle=grd2;
+    moveToTx(-150,-150 - y,-150,Tx);lineToTx(-200,-150 - y,-150,Tx);
+    lineToTx(-200,-200-y,-150,Tx);lineToTx(-150,-200-y,-150,Tx);
+    lineToTx(-150,-150-y,-150,Tx);
+	context.closePath();
+    context.fill();
+    context.stroke();
+	
+
+	
+	context.beginPath();
+	context.fillStyle=grd3;
+    moveToTx(-200,-150-y,-200,Tx);lineToTx(-150,-150-y,-200,Tx);
+    lineToTx(-150,-200-y,-200,Tx);lineToTx(-200,-200-y,-200,Tx);
+    lineToTx(-200,-150-y,-200,Tx);
+	context.closePath();
+    context.fill();
+    context.stroke();
+   } else {
+	context.beginPath();
+	context.fillStyle=grd3;
+    moveToTx(-200,-150-y,-200,Tx);lineToTx(-150,-150-y,-200,Tx);
+    lineToTx(-150,-200-y,-200,Tx);lineToTx(-200,-200-y,-200,Tx);
+    lineToTx(-200,-150-y,-200,Tx);
+	context.closePath();
+    context.fill();
+    context.stroke();
+    
+
+	
+	context.beginPath();
+	context.fillStyle=grd2;
+    moveToTx(-150,-150-y,-150,Tx);lineToTx(-200,-150-y,-150,Tx);
+    lineToTx(-200,-200-y,-150,Tx);lineToTx(-150,-200-y,-150,Tx);
+    lineToTx(-150,-150-y,-150,Tx);
+	context.closePath();
+    context.fill();
+    context.stroke();
+   }
+
+    context.beginPath();
+	context.fillStyle=grd1;
+    moveToTx(-150,-150 - y,-200,Tx);lineToTx(-150,-150 - y,-150,Tx);
+    lineToTx(-150,-200 - y,-150,Tx);lineToTx(-150,-200 - y,-200,Tx);
+    lineToTx(-150,-150 - y,-200,Tx);
+	context.closePath();
+    context.fill();
+    context.stroke();
+}
+
+
+function draw() {
+canvas.width = canvas.width;
+angle += (Math.PI / 128) * slider2.value / 50;
+if(angle >= 2 * Math.PI) {
+  angle = 0;
+}
+
+camAng = slider1.value;
+var axis = [1,0,0];
+var model = m4.axisRotation(axis, angle);
+var model2 = m4.axisRotation(axis, Math.PI);
+var eye = [camAng, 300, 500];
+var target = [0,0,0];
+var up = [0,1,0];
+
+var camera = m4.inverse(m4.lookAt(eye,target,up));
+var modelView = m4.multiply(model, camera);
+var modelView2 =m4.multiply(model2, camera);	
+context.translate(50, 700);
+
+context.translate(-75, -700);
+context.translate(400, 450);
+drawCube(modelView);
+
+window.requestAnimationFrame(draw);
+}
+window.requestAnimationFrame(draw);
+};
+window.onload = setup;
+</script>
+</body>
+</html>

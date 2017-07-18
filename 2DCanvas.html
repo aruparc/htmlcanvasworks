@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <canvas id="myCanvas" width="1000" height="300"></canvas>
+	<br/>
+	<input id="slider1" type="range" min="-100" max="100" />
+	<br/>
+	<input id="slider2" type="range" min="-100" max="100" />
+	<br/>
+	<script>
+	function setup() { "use strict";
+  var canvas = document.getElementById('myCanvas');
+  var slider1 = document.getElementById('slider1');
+  slider1.value = -25;
+  var slider2 = document.getElementById('slider2');
+  slider2.value = 50;
+  function draw() {
+    var context = canvas.getContext('2d');
+    canvas.width = canvas.width;
+    //using existing sliders to get angles 
+    var theta1 = slider1.value*0.005*Math.PI;
+    var phi1 = slider2.value*0.005*Math.PI;
+    function linkage(color){
+      context.beginPath();
+      context.fillStyle = color;
+      context.fillRect(50,0,50,50);
+    }
+                  
+    //forming different rectangles
+    context.translate(50,150);
+    context.save();
+    linkage("blue");
+    context.translate(100,0);
+    context.save();
+    context.rotate(theta1);
+    linkage("green");
+    context.translate(100,0);
+    context.save();
+    context.rotate(phi1);
+    context.scale(0.5,1);
+    linkage("red");
+    context.restore();
+    context.save();
+    context.rotate(phi2);
+    context.scale(0.5,1);  
+  }
+  slider1.addEventListener("input",draw);
+  slider2.addEventListener("input",draw);
+  draw();
+}
+window.onload = setup;
+	</script>
+</body>
+</html>
